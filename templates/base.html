@@ -1,0 +1,102 @@
+{% load static %} {# Make sure to load static files tag #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}QMS Tool{% endblock title %}</title> {# Default title, block for overriding #}
+
+    <!-- Bootstrap CSS (CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    
+    {# --- OR --- Use Django static files for Bootstrap CSS (Recommended for production) #}
+    {# First, download Bootstrap files and place them in your static directory #}
+    {# Then uncomment this line and comment out the CDN link above: #}
+    {# <link rel="stylesheet" href="{% static 'path/to/your/bootstrap.min.css' %}"> #}
+
+    <!-- Optional: Link to your custom CSS file -->
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}"> {# Assumes you have a static/css/custom.css file #}
+
+    {# Block for page-specific CSS or meta tags in the head #}
+    {% block extra_head %}{% endblock extra_head %}
+
+    {# HTMX Script (CDN) - Place in head or body, head is common for detection #}
+    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+
+    {# --- OR --- Use Django static files for HTMX #}
+    {# <script src="{% static 'path/to/your/htmx.min.js' %}"></script> #}
+
+</head>
+<body class="d-flex flex-column min-vh-100"> {# Basic structure for sticky footer if needed #}
+
+    {# Add CSRF token header for HTMX POST/PUT/DELETE requests #}
+    <script>
+        document.body.addEventListener('htmx:configRequest', (event) => {
+          event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+        })
+    </script>
+
+    <header>
+        {# Optional: Add a Bootstrap Navbar here #}
+        {# Example: include a separate template for the navbar #}
+        {# {% include 'partials/_navbar.html' %} #}
+        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+            <div class="container">
+                <a class="navbar-brand" href="/">QMS Tool</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/">Home</a>
+                        </li>
+                        {# Add other nav links here #}
+                        {# <li class="nav-item"> #}
+                        {#    <a class="nav-link" href="{% url 'some_view_name' %}">Some Page</a> #}
+                        {# </li> #}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container flex-grow-1"> {# Main content area with Bootstrap container #}
+        {# Display Django messages framework messages #}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {# The main content block where child templates will insert their content #}
+        {% block content %}
+            <p>Default content. Override this block in child templates.</p>
+        {% endblock content %}
+    </main>
+
+    <footer class="mt-auto py-3 bg-light text-center"> {# Basic sticky footer using flex classes on body #}
+        <div class="container">
+            <span class="text-muted">© {% now "Y" %} Your Company Name</span>
+            {# {% block footer %}{% endblock footer %} #} {# Optional block for footer content #}
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle (includes Popper.js) (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    
+    {# --- OR --- Use Django static files for Bootstrap JS #}
+    {# <script src="{% static 'path/to/your/bootstrap.bundle.min.js' %}"></script> #}
+
+    {# Optional: Link to your custom JavaScript file #}
+    {# <script src="{% static 'js/custom.js' %}"></script> #}
+
+    {# Block for page-specific JavaScript #}
+    {% block extra_js %}{% endblock extra_js %}
+
+</body>
+</html>
